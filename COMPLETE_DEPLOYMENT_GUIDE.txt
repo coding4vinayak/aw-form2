@@ -1,0 +1,942 @@
+# UNIFIED BOOTSTRAP FORM DEPLOYMENT GUIDE
+# Complete Instructions for Deploying Your 14-Section Business Form
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+1. SYSTEM OVERVIEW
+2. DEPLOYMENT OPTIONS COMPARISON
+3. RAILWAY DEPLOYMENT (RECOMMENDED)
+4. RENDER DEPLOYMENT
+5. NETLIFY/VERCEL STATIC DEPLOYMENT
+6. HEROKU DEPLOYMENT
+7. AUTOMATED DEPLOYMENT SCRIPT
+8. TROUBLESHOOTING
+9. FINAL RECOMMENDATIONS
+
+================================================================================
+1. SYSTEM OVERVIEW
+================================================================================
+
+Your unified bootstrap form system includes:
+- Complete 14-section business information form
+- Flask backend with PostgreSQL/SQLite database
+- Admin panel with Excel export functionality
+- Multi-language support (English, Hindi, Marathi)
+- File upload with base64 encoding
+- Single unified deployment (no separate frontend/backend)
+
+Current structure:
+/app/bootstrap/
+├── unified_app.py          # Main Flask application
+├── frontend/
+│   ├── index.html         # Complete 14-section form
+│   ├── admin.html         # Admin panel
+│   ├── app.js            # Enhanced JavaScript
+│   └── admin.js          # Admin functionality
+├── backend/
+│   └── requirements.txt   # Python dependencies
+├── uploads/               # File upload directory
+├── .env                  # Environment variables
+├── deploy.sh             # Automated deployment script
+└── DEPLOYMENT_GUIDE.md   # This guide
+
+================================================================================
+2. DEPLOYMENT OPTIONS COMPARISON
+================================================================================
+
+OPTION 1: RAILWAY (RECOMMENDED)
+- Best for: Full Flask app functionality
+- Database: PostgreSQL included
+- Admin Panel: Full functionality
+- File Upload: Yes
+- Excel Export: Yes
+- Free Tier: Yes
+- Cost After Free: ~$5/month
+- Deployment: Easy GitHub integration
+- Maintenance: Low
+
+OPTION 2: RENDER
+- Best for: Flask apps with good performance
+- Database: PostgreSQL add-on
+- Admin Panel: Full functionality
+- File Upload: Yes
+- Excel Export: Yes
+- Free Tier: Yes
+- Cost After Free: ~$7/month
+- Deployment: GitHub integration
+- Maintenance: Low
+
+OPTION 3: NETLIFY/VERCEL (STATIC VERSION)
+- Best for: Simple forms without backend
+- Database: localStorage only
+- Admin Panel: Limited functionality
+- File Upload: No
+- Excel Export: JSON only
+- Free Tier: Forever free
+- Cost After Free: FREE
+- Deployment: Instant drag & drop
+- Maintenance: None
+
+OPTION 4: HEROKU
+- Best for: Classic Flask deployment
+- Database: PostgreSQL add-on
+- Admin Panel: Full functionality
+- File Upload: Yes
+- Excel Export: Yes
+- Free Tier: No longer available
+- Cost: Starts at $7/month
+- Deployment: Git-based
+- Maintenance: Medium
+
+================================================================================
+3. RAILWAY DEPLOYMENT (RECOMMENDED)
+================================================================================
+
+Why Railway is Recommended:
+- Easy Flask deployment
+- Automatic PostgreSQL database
+- Free tier available
+- GitHub integration
+- Simple environment variable management
+- Good performance
+
+STEP 1: PREPARE YOUR PROJECT
+----------------------------
+cd /app/bootstrap
+
+# Create Procfile
+echo "web: python unified_app.py" > Procfile
+
+# Update unified_app.py for Railway
+# Add this at the end of your unified_app.py file:
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
+
+STEP 2: PUSH TO GITHUB
+---------------------
+git init
+git add .
+git commit -m "Initial commit - unified bootstrap form"
+git remote add origin https://github.com/yourusername/bootstrap-form.git
+git push -u origin main
+
+STEP 3: DEPLOY TO RAILWAY
+------------------------
+1. Go to https://railway.app
+2. Sign up with GitHub account
+3. Click "New Project"
+4. Select "Deploy from GitHub repo"
+5. Choose your repository
+6. Railway will automatically detect Flask and build
+
+STEP 4: ADD DATABASE
+-------------------
+1. In Railway dashboard, click "Add Service"
+2. Select "PostgreSQL"
+3. Database will be created automatically
+4. Connection string will be available in environment variables
+
+STEP 5: SET ENVIRONMENT VARIABLES
+--------------------------------
+In Railway dashboard:
+1. Go to your project settings
+2. Add environment variables:
+   - SECRET_KEY: your-secret-key-here
+   - UPLOAD_FOLDER: uploads
+   - MAX_CONTENT_LENGTH: 16777216
+   - DATABASE_URL: (automatically set by PostgreSQL service)
+
+STEP 6: ACCESS YOUR APP
+----------------------
+Your app will be available at: https://your-app-name.up.railway.app
+Admin panel: https://your-app-name.up.railway.app/admin
+
+================================================================================
+4. RENDER DEPLOYMENT
+================================================================================
+
+Why Choose Render:
+- Good Flask support
+- Free tier available
+- Reliable hosting
+- PostgreSQL database included
+- Good documentation
+
+STEP 1: PREPARE YOUR PROJECT
+----------------------------
+cd /app/bootstrap
+
+# Create render.yaml
+cat > render.yaml << 'EOF'
+services:
+  - type: web
+    name: bootstrap-form
+    env: python
+    region: oregon
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "python unified_app.py"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: UPLOAD_FOLDER
+        value: "uploads"
+      - key: MAX_CONTENT_LENGTH
+        value: "16777216"
+
+  - type: pserv
+    name: bootstrap-form-db
+    env: postgresql
+    region: oregon
+EOF
+
+# Update unified_app.py for Render
+# Add this at the end of your unified_app.py file:
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
+
+STEP 2: PUSH TO GITHUB
+---------------------
+git init
+git add .
+git commit -m "Initial commit - unified bootstrap form"
+git remote add origin https://github.com/yourusername/bootstrap-form.git
+git push -u origin main
+
+STEP 3: DEPLOY TO RENDER
+-----------------------
+1. Go to https://render.com
+2. Sign up with GitHub account
+3. Click "New" → "Web Service"
+4. Connect your GitHub repository
+5. Configure:
+   - Build Command: pip install -r backend/requirements.txt
+   - Start Command: python unified_app.py
+   - Environment: Python 3
+
+STEP 4: ADD DATABASE
+-------------------
+1. In Render dashboard, click "New" → "PostgreSQL"
+2. Create database with default settings
+3. Copy the connection string
+4. Add DATABASE_URL environment variable to your web service
+
+STEP 5: ACCESS YOUR APP
+----------------------
+Your app will be available at: https://your-app-name.onrender.com
+Admin panel: https://your-app-name.onrender.com/admin
+
+================================================================================
+5. NETLIFY/VERCEL STATIC DEPLOYMENT
+================================================================================
+
+Why Choose Static Deployment:
+- Completely FREE forever
+- Instant deployment
+- No server maintenance
+- CDN included
+- Perfect for simple forms
+
+LIMITATIONS:
+- No database (uses localStorage)
+- No file upload to server
+- Limited admin functionality
+- Data export as JSON only
+
+STEP 1: CREATE STATIC VERSION
+-----------------------------
+cd /app/bootstrap
+mkdir static-deploy
+cp -r frontend/* static-deploy/
+
+STEP 2: MODIFY FOR STATIC DEPLOYMENT
+-----------------------------------
+# Create modified app.js for static deployment
+cat > static-deploy/app-static.js << 'EOF'
+// Static version - uses localStorage instead of backend
+const backendUrl = '';
+let currentSection = 0;
+let formId = null;
+let formData = {};
+let currentLanguage = 'en';
+const totalSections = 14;
+
+// Generate unique form ID
+function generateFormId() {
+    formId = 'form_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// Initialize the form
+document.addEventListener('DOMContentLoaded', function() {
+    generateFormId();
+    updateLanguage();
+});
+
+// Language translations (same as original)
+const translations = {
+    en: {
+        companyName: "Abetworks.in",
+        title: "Business Information Collection Form",
+        disclaimer: {
+            title: "📋 Welcome to Abetworks.in Business Information Form",
+            content: "This comprehensive form will take approximately 10-15 minutes to complete. Please fill it out at your convenience. Nothing is mandatory, but sharing accurate and complete information will help us provide you with better results and tailored solutions for your business needs.",
+            note: "💡 Your data is secure and will be stored locally in your browser."
+        },
+        startForm: "Start Form",
+        section: "Section",
+        of: "of",
+        previous: "Previous",
+        next: "Next",
+        save: "Save Section",
+        saving: "Saving...",
+        thankYou: "🎉 Thank You for Your Submission!",
+        submissionMsg: "Your business information has been saved locally. You can export it as JSON file."
+    },
+    hi: {
+        companyName: "Abetworks.in",
+        title: "व्यावसायिक जानकारी संग्रह फॉर्म",
+        disclaimer: {
+            title: "📋 Abetworks.in व्यावसायिक जानकारी फॉर्म में आपका स्वागत है",
+            content: "इस व्यापक फॉर्म को पूरा करने में लगभग 10-15 मिनट का समय लगेगा। कृपया इसे अपनी सुविधानुसार भरें।",
+            note: "💡 आपका डेटा सुरक्षित है और स्थानीय रूप से संग्रहीत किया जाएगा।"
+        },
+        startForm: "फॉर्म शुरू करें",
+        section: "खंड",
+        of: "का",
+        previous: "पिछला",
+        next: "अगला",
+        save: "खंड सहेजें",
+        saving: "सहेजा जा रहा है...",
+        thankYou: "🎉 आपके सबमिशन के लिए धन्यवाद!",
+        submissionMsg: "आपकी व्यावसायिक जानकारी स्थानीय रूप से सहेजी गई है।"
+    },
+    mr: {
+        companyName: "Abetworks.in", 
+        title: "व्यावसायिक माहिती संकलन फॉर्म",
+        disclaimer: {
+            title: "📋 Abetworks.in व्यावसायिक माहिती फॉर्ममध्ये आपले स्वागत आहे",
+            content: "हा व्यापक फॉर्म पूर्ण करण्यासाठी अंदाजे 10-15 मिनिटे लागतील।",
+            note: "💡 तुमचा डेटा सुरक्षित आहे आणि स्थानीय पातळीवर साठवला जाईल।"
+        },
+        startForm: "फॉर्म सुरू करा",
+        section: "विभाग",
+        of: "चा",
+        previous: "मागील",
+        next: "पुढील",
+        save: "विभाग जतन करा",
+        saving: "जतन करत आहे...",
+        thankYou: "🎉 तुमच्या सबमिशनसाठी धन्यवाद!",
+        submissionMsg: "तुमची व्यावसायिक माहिती स्थानीय पातळीवर जतन केली गेली आहे।"
+    }
+};
+
+// Change language
+function changeLanguage() {
+    const select = document.getElementById('languageSelect');
+    currentLanguage = select.value;
+    updateLanguage();
+}
+
+// Update language texts
+function updateLanguage() {
+    const t = translations[currentLanguage];
+    
+    if (document.getElementById('disclaimerTitle')) {
+        document.getElementById('disclaimerTitle').textContent = t.disclaimer.title;
+        document.getElementById('disclaimerText').textContent = t.disclaimer.content;
+        document.getElementById('disclaimerNote').textContent = t.disclaimer.note;
+        document.getElementById('startButton').textContent = t.startForm;
+    }
+    
+    if (document.getElementById('formTitle')) {
+        document.getElementById('formTitle').textContent = t.title;
+    }
+    
+    if (document.getElementById('sectionText')) {
+        document.getElementById('sectionText').textContent = t.section;
+        document.getElementById('ofText').textContent = t.of;
+    }
+    
+    if (document.getElementById('prevBtn')) {
+        document.getElementById('prevBtn').textContent = t.previous;
+        document.getElementById('saveBtn').textContent = t.save;
+        document.getElementById('nextBtn').textContent = t.next;
+    }
+}
+
+// Start the form
+function startForm() {
+    currentSection = 1;
+    document.getElementById('disclaimerSection').style.display = 'none';
+    document.getElementById('progressSection').style.display = 'block';
+    document.getElementById('navigationButtons').style.display = 'flex';
+    showSection(currentSection);
+    updateProgress();
+}
+
+// Show specific section
+function showSection(sectionNum) {
+    const sections = document.querySelectorAll('.form-section');
+    sections.forEach(section => section.classList.remove('active'));
+    
+    const currentSectionElement = document.getElementById('section' + sectionNum);
+    if (currentSectionElement) {
+        currentSectionElement.classList.add('active');
+    }
+    
+    document.getElementById('currentSectionNum').textContent = sectionNum;
+    document.getElementById('prevBtn').disabled = sectionNum === 1;
+    
+    if (sectionNum === totalSections) {
+        document.getElementById('nextBtn').style.display = 'none';
+    } else {
+        document.getElementById('nextBtn').style.display = 'block';
+        document.getElementById('nextBtn').textContent = translations[currentLanguage].next;
+    }
+}
+
+// Update progress bar
+function updateProgress() {
+    const progress = (currentSection / totalSections) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+}
+
+// Collect form data from current section
+function collectFormData() {
+    const currentSectionElement = document.getElementById('section' + currentSection);
+    if (!currentSectionElement) return;
+    
+    const inputs = currentSectionElement.querySelectorAll('input, select, textarea');
+    
+    const checkboxFields = ['required_pages', 'required_features', 'ad_platforms', 'additional_services'];
+    checkboxFields.forEach(field => {
+        formData[field] = [];
+    });
+    
+    inputs.forEach(input => {
+        if (input.type === 'checkbox') {
+            if (input.checked) {
+                if (!formData[input.name]) {
+                    formData[input.name] = [];
+                }
+                if (Array.isArray(formData[input.name])) {
+                    formData[input.name].push(input.value);
+                } else {
+                    formData[input.name] = [formData[input.name], input.value];
+                }
+            }
+        } else if (input.type === 'file') {
+            // File uploads not supported in static version
+        } else if (input.name && input.value !== undefined) {
+            formData[input.name] = input.value;
+        }
+    });
+    
+    Object.keys(formData).forEach(key => {
+        if (Array.isArray(formData[key])) {
+            formData[key] = formData[key].join(',');
+        }
+    });
+}
+
+// Save current section to localStorage
+async function saveSection() {
+    try {
+        const saveBtn = document.getElementById('saveBtn');
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = translations[currentLanguage].saving;
+        saveBtn.disabled = true;
+        
+        collectFormData();
+        
+        // Save to localStorage
+        localStorage.setItem('formData_' + formId, JSON.stringify(formData));
+        localStorage.setItem('currentSection_' + formId, currentSection);
+        
+        showAlert('Section saved locally!', 'success');
+        
+        saveBtn.textContent = originalText;
+        saveBtn.disabled = false;
+        
+    } catch (error) {
+        showAlert('Error saving section: ' + error.message, 'danger');
+        document.getElementById('saveBtn').disabled = false;
+    }
+}
+
+// Navigate to previous section
+function previousSection() {
+    if (currentSection > 1) {
+        currentSection--;
+        showSection(currentSection);
+        updateProgress();
+    }
+}
+
+// Navigate to next section
+async function nextSection() {
+    if (currentSection < totalSections) {
+        await saveSection();
+        currentSection++;
+        showSection(currentSection);
+        updateProgress();
+    }
+}
+
+// Submit final form
+async function submitForm() {
+    try {
+        const confirmAccuracy = document.getElementById('confirmAccuracy').checked;
+        const agreeTerms = document.getElementById('agreeTerms').checked;
+        
+        if (!confirmAccuracy || !agreeTerms) {
+            showAlert('Please confirm the accuracy of information and agree to terms and conditions.', 'danger');
+            return;
+        }
+        
+        const submitBtn = document.getElementById('finalSubmitBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        submitBtn.disabled = true;
+        
+        collectFormData();
+        
+        // Save final form to localStorage
+        const finalData = {
+            ...formData,
+            form_id: formId,
+            current_section: 14,
+            is_completed: true,
+            timestamp: new Date().toISOString()
+        };
+        
+        localStorage.setItem('formData_' + formId, JSON.stringify(finalData));
+        
+        completeForm();
+        
+    } catch (error) {
+        showAlert('Error submitting form: ' + error.message, 'danger');
+        document.getElementById('finalSubmitBtn').disabled = false;
+    }
+}
+
+// Complete the form
+function completeForm() {
+    document.getElementById('formSections').style.display = 'none';
+    document.getElementById('navigationButtons').style.display = 'none';
+    document.getElementById('progressSection').style.display = 'none';
+    document.getElementById('completionSection').classList.add('active');
+    showAlert(translations[currentLanguage].submissionMsg, 'success');
+}
+
+// Start new form
+function startNewForm() {
+    currentSection = 0;
+    formData = {};
+    generateFormId();
+    
+    document.getElementById('disclaimerSection').style.display = 'block';
+    document.getElementById('progressSection').style.display = 'none';
+    document.getElementById('navigationButtons').style.display = 'none';
+    document.getElementById('formSections').style.display = 'block';
+    document.getElementById('completionSection').classList.remove('active');
+    
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        if (input.type === 'checkbox' || input.type === 'radio') {
+            input.checked = false;
+        } else if (input.type === 'file') {
+            input.value = '';
+        } else {
+            input.value = '';
+        }
+    });
+    
+    clearAlerts();
+}
+
+// Export data as JSON
+function exportData() {
+    const forms = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('formData_')) {
+            const formData = JSON.parse(localStorage.getItem(key));
+            forms.push(formData);
+        }
+    }
+    
+    const dataStr = JSON.stringify(forms, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = 'bootstrap_forms_export.json';
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
+
+// Show alert message
+function showAlert(message, type) {
+    const alertContainer = document.getElementById('alertContainer');
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    alertContainer.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+// Clear all alerts
+function clearAlerts() {
+    const alertContainer = document.getElementById('alertContainer');
+    alertContainer.innerHTML = '';
+}
+
+// Handle image upload (static version - just show preview)
+function uploadImage(input, fieldName) {
+    if (!input.files || input.files.length === 0) return;
+    
+    const file = input.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        const previewContainer = document.getElementById(fieldName.replace('_path', 'Preview'));
+        if (previewContainer) {
+            previewContainer.innerHTML = `<img src="${e.target.result}" class="uploaded-image" alt="Uploaded image">`;
+        }
+        
+        // Store in form data
+        formData[fieldName] = e.target.result;
+        
+        showAlert('Image uploaded successfully!', 'success');
+    };
+    
+    reader.readAsDataURL(file);
+}
+EOF
+
+# Update index.html to use static app.js
+sed -i 's/src="app.js"/src="app-static.js"/' static-deploy/index.html
+
+STEP 3: DEPLOY TO NETLIFY
+-------------------------
+1. Go to https://netlify.com
+2. Sign up for free account
+3. Drag and drop the 'static-deploy' folder onto the deployment area
+4. Site will be live instantly at: https://random-name.netlify.app
+5. Optional: Change site name in settings
+
+STEP 4: DEPLOY TO VERCEL
+------------------------
+1. Go to https://vercel.com
+2. Sign up for free account
+3. Click "New Project"
+4. Import your GitHub repository
+5. Select the 'static-deploy' folder as root directory
+6. Site will be live at: https://your-project-name.vercel.app
+
+STEP 5: FEATURES IN STATIC VERSION
+---------------------------------
+✅ All 14 form sections work
+✅ Multi-language support
+✅ Form validation
+✅ Progress tracking
+✅ Image preview (base64)
+✅ Data export as JSON
+✅ Responsive design
+
+❌ No database storage
+❌ No file upload to server
+❌ No Excel export
+❌ Limited admin functionality
+
+================================================================================
+6. HEROKU DEPLOYMENT
+================================================================================
+
+Why Choose Heroku:
+- Classic Flask deployment platform
+- Good PostgreSQL integration
+- Reliable hosting
+- Git-based deployment
+
+NOTE: Heroku no longer offers free tier, starts at $7/month
+
+STEP 1: PREPARE YOUR PROJECT
+----------------------------
+cd /app/bootstrap
+
+# Create Procfile
+echo "web: python unified_app.py" > Procfile
+
+# Create runtime.txt
+echo "python-3.9.16" > runtime.txt
+
+# Update unified_app.py for Heroku
+# Add this at the end of your unified_app.py file:
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
+
+STEP 2: INSTALL HEROKU CLI
+-------------------------
+# On Ubuntu/Debian
+curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+
+# On macOS
+brew tap heroku/brew && brew install heroku
+
+# On Windows
+Download from: https://devcenter.heroku.com/articles/heroku-cli
+
+STEP 3: DEPLOY TO HEROKU
+------------------------
+heroku login
+heroku create your-app-name
+heroku addons:create heroku-postgresql:hobby-dev
+
+# Set environment variables
+heroku config:set SECRET_KEY=your-secret-key-here
+heroku config:set UPLOAD_FOLDER=uploads
+heroku config:set MAX_CONTENT_LENGTH=16777216
+
+# Deploy
+git add .
+git commit -m "Deploy to Heroku"
+git push heroku main
+
+STEP 4: ACCESS YOUR APP
+----------------------
+Your app will be available at: https://your-app-name.herokuapp.com
+Admin panel: https://your-app-name.herokuapp.com/admin
+
+================================================================================
+7. AUTOMATED DEPLOYMENT SCRIPT
+================================================================================
+
+An automated deployment script has been created for you:
+
+SCRIPT LOCATION: /app/bootstrap/deploy.sh
+
+HOW TO USE:
+----------
+cd /app/bootstrap
+chmod +x deploy.sh
+./deploy.sh
+
+SCRIPT OPTIONS:
+--------------
+1. Railway (Recommended for Flask apps)
+2. Render (Good Flask support)
+3. Static version for Netlify/Vercel
+4. Heroku (Classic choice)
+5. Manual setup guide
+
+The script will:
+- Create necessary configuration files
+- Update your app for the chosen platform
+- Provide step-by-step deployment instructions
+- Set up environment variables
+- Configure database connections
+
+SCRIPT CONTENTS:
+---------------
+#!/bin/bash
+
+# 🚀 Bootstrap Form Deployment Script
+# Choose your deployment platform
+
+echo "🚀 Bootstrap Form Deployment Options"
+echo "===================================="
+echo ""
+echo "1. Railway (Recommended for Flask apps)"
+echo "2. Render (Good Flask support)"
+echo "3. Static version for Netlify/Vercel"
+echo "4. Heroku (Classic choice)"
+echo "5. Manual setup guide"
+echo ""
+read -p "Choose deployment option (1-5): " choice
+
+case $choice in
+    1)
+        echo "🚂 Preparing Railway deployment..."
+        echo "web: python unified_app.py" > Procfile
+        sed -i 's/app.run(debug=True, host='"'"'0.0.0.0'"'"', port=5000)/port = int(os.environ.get("PORT", 5000))\n    app.run(host="0.0.0.0", port=port, debug=False)/' unified_app.py
+        echo "✅ Railway setup complete!"
+        ;;
+    2)
+        echo "🎨 Preparing Render deployment..."
+        # Creates render.yaml and updates app
+        ;;
+    3)
+        echo "⚡ Creating static version..."
+        # Creates static deployment files
+        ;;
+    4)
+        echo "🟣 Preparing Heroku deployment..."
+        # Creates Heroku configuration
+        ;;
+    5)
+        echo "📋 Manual Deployment Guide"
+        # Shows manual instructions
+        ;;
+esac
+
+================================================================================
+8. TROUBLESHOOTING
+================================================================================
+
+COMMON ISSUES AND SOLUTIONS:
+
+ISSUE 1: DATABASE CONNECTION ERROR
+---------------------------------
+Problem: "could not connect to server"
+Solution: 
+- Check DATABASE_URL environment variable
+- Ensure PostgreSQL service is running
+- Verify database credentials
+
+ISSUE 2: PORT BINDING ERROR
+--------------------------
+Problem: "Address already in use"
+Solution:
+- Update app.py to use PORT environment variable
+- Add: port = int(os.environ.get('PORT', 5000))
+
+ISSUE 3: MISSING DEPENDENCIES
+-----------------------------
+Problem: "ModuleNotFoundError"
+Solution:
+- Check requirements.txt includes all dependencies
+- Run: pip install -r backend/requirements.txt
+
+ISSUE 4: STATIC FILES NOT LOADING
+---------------------------------
+Problem: CSS/JS not loading
+Solution:
+- Check static file paths in HTML
+- Ensure files are in correct directory
+- Verify web server configuration
+
+ISSUE 5: UPLOAD FOLDER PERMISSIONS
+----------------------------------
+Problem: "Permission denied" on file upload
+Solution:
+- Create uploads directory: mkdir -p uploads
+- Set permissions: chmod 755 uploads
+
+ISSUE 6: ENVIRONMENT VARIABLES
+------------------------------
+Problem: "KeyError" for environment variables
+Solution:
+- Set all required environment variables
+- Use os.environ.get() with default values
+- Check platform-specific variable names
+
+DEBUGGING TIPS:
+--------------
+1. Check application logs on your hosting platform
+2. Test locally first: python unified_app.py
+3. Verify all environment variables are set
+4. Check database connection separately
+5. Test API endpoints individually
+
+================================================================================
+9. FINAL RECOMMENDATIONS
+================================================================================
+
+RECOMMENDED DEPLOYMENT APPROACH:
+
+FOR BUSINESS/PRODUCTION USE:
+---------------------------
+✅ RAILWAY (TOP CHOICE)
+- Complete functionality preserved
+- Easy database management
+- Fair pricing ($5/month after free tier)
+- Excellent Flask support
+- GitHub integration
+- Automatic SSL certificates
+
+✅ RENDER (ALTERNATIVE)
+- Good performance
+- Free tier available
+- PostgreSQL included
+- Slightly higher pricing ($7/month)
+
+FOR TESTING/SIMPLE USE:
+----------------------
+✅ NETLIFY (BEST FREE OPTION)
+- Completely free forever
+- Instant deployment
+- Perfect for form collection
+- Uses localStorage instead of database
+- No backend maintenance required
+
+STEP-BY-STEP RECOMMENDATION:
+---------------------------
+1. Start with Railway for full functionality
+2. Use the automated deployment script: ./deploy.sh
+3. Choose option 1 (Railway)
+4. Follow the provided instructions
+5. Test thoroughly before going live
+
+COST BREAKDOWN:
+--------------
+Railway: Free tier → $5/month
+Render: Free tier → $7/month
+Netlify: Free forever
+Vercel: Free forever
+Heroku: $7/month (no free tier)
+
+FINAL CHECKLIST:
+---------------
+✅ Choose deployment platform
+✅ Run deployment script
+✅ Set environment variables
+✅ Configure database
+✅ Test all form sections
+✅ Test admin panel
+✅ Test file uploads
+✅ Test Excel export
+✅ Test multi-language support
+✅ Set up monitoring
+✅ Configure custom domain (optional)
+
+YOUR UNIFIED BOOTSTRAP FORM IS NOW READY FOR DEPLOYMENT!
+
+================================================================================
+CONTACT & SUPPORT
+================================================================================
+
+If you need help:
+1. Check the troubleshooting section above
+2. Review platform-specific documentation
+3. Test locally first to isolate issues
+4. Check application logs on your hosting platform
+
+Your 14-section unified bootstrap form includes:
+- Complete business information collection
+- Multi-language support (English, Hindi, Marathi)
+- Admin panel with authentication
+- Excel export functionality
+- File upload capabilities
+- Responsive design
+- Single unified deployment
+
+Good luck with your deployment! 🚀
+
+================================================================================
+END OF DEPLOYMENT GUIDE
+================================================================================

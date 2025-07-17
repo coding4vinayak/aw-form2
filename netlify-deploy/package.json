@@ -1,0 +1,9 @@
+{
+  "name": "bootstrap-form-netlify",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "mkdir -p public && cp -r frontend/* public/ && echo 'Build complete'"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Information Form - Abetworks.in</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .form-section {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-section.active {
+            display: block;
+        }
+        .progress-container {
+            margin-bottom: 30px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .checkbox-item:hover {
+            background-color: #f8f9fa;
+            border-color: #667eea;
+        }
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .uploaded-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 2px solid #e9ecef;
+        }
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .disclaimer-container {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+        .company-name {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .disclaimer-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+        }
+        .start-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            margin-top: 30px;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            border: none;
+            border-radius: 10px;
+        }
+        .alert-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa8a8 100%);
+            border: none;
+            border-radius: 10px;
+        }
+        .completion-summary {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #a8e6cf 0%, #56ab2f 100%);
+            border-radius: 15px;
+            color: white;
+            margin-top: 30px;
+        }
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        .btn-outline-secondary {
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="form-container">
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <select class="form-select" id="languageSelect" onchange="changeLanguage()">
+                    <option value="en">English</option>
+                    <option value="hi">हिंदी</option>
+                    <option value="mr">मराठी</option>
+                </select>
+            </div>
+
+            <!-- Disclaimer Section -->
+            <div id="disclaimerSection" class="form-section active">
+                <div class="disclaimer-container">
+                    <h1 class="company-name">Abetworks.in</h1>
+                    <div class="disclaimer-content">
+                        <h2 id="disclaimerTitle">📋 Welcome to Abetworks.in Business Information Form</h2>
+                        <p id="disclaimerText">This comprehensive form will take approximately 10-15 minutes to complete. Please fill it out at your convenience. Nothing is mandatory, but sharing accurate and complete information will help us provide you with better results and tailored solutions for your business needs.</p>
+                        <p id="disclaimerNote">💡 Your data is secure and will be used only for providing you with the best possible service.</p>
+                        <button class="start-button" onclick="startForm()" id="startButton">Start Form</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="progressSection" class="progress-container" style="display: none;">
+                <div class="section-header">
+                    <h1 class="company-name" style="margin-bottom: 10px;">Abetworks.in</h1>
+                    <h3 id="formTitle">Business Information Collection Form</h3>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 0%" id="progressBar"></div>
+                </div>
+                <p class="text-center mt-2"><span id="sectionText">Section</span> <span id="currentSectionNum">1</span> <span id="ofText">of</span> 14</p>
+            </div>
+
+            <!-- Form Sections -->
+            <div id="formSections">
+                <!-- Section 1: Business Contact Information -->
+                <div class="form-section" id="section1">
+                    <h3 class="mb-4">🟦 1. Business & Contact Information</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fullName" class="form-label">Full Name:</label>
+                            <input type="text" class="form-control" id="fullName" name="full_name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email Address:</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Phone Number (with WhatsApp if available):</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="businessName" class="form-label">Business Name (Legal):</label>
+                            <input type="text" class="form-control" id="businessName" name="business_name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="businessDisplayName" class="form-label">Business Display Name:</label>
+                            <input type="text" class="form-control" id="businessDisplayName" name="business_display_name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="businessType" class="form-label">Business Registration Type:</label>
+                            <select class="form-select" id="businessType" name="business_type">
+                                <option value="">Select Type</option>
+                                <option value="sole_proprietor">Sole Proprietor</option>
+                                <option value="partnership">Partnership</option>
+                                <option value="pvt_ltd">Pvt Ltd</option>
+                                <option value="llp">LLP</option>
+                                <option value="others">Others</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="registrationNumber" class="form-label">Business Registration Number (GST, CIN, etc.):</label>
+                            <input type="text" class="form-control" id="registrationNumber" name="registration_number">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="businessLocations" class="form-label">Business Location(s) (Head office, branches, pin codes served):</label>
+                            <textarea class="form-control" id="businessLocations" name="business_locations" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Website Objectives -->
+                <div class="form-section" id="section2">
+                    <h3 class="mb-4">🟩 2. Website Objective & Goals</h3>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="websitePurpose" class="form-label">What is the primary purpose of your website?</label>
+                            <textarea class="form-control" id="websitePurpose" name="website_purpose" rows="4" placeholder="e.g., Lead generation, Online sales, Portfolio, Information only, Booking services, etc."></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="businessGoals" class="form-label">What are your top 3 business goals with this website?</label>
+                            <textarea class="form-control" id="businessGoals" name="business_goals" rows="4"></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="successMetrics" class="form-label">How will you define success or ROI from the website?</label>
+                            <textarea class="form-control" id="successMetrics" name="success_metrics" rows="4" placeholder="e.g., Traffic, Leads, Sales, Engagement, Conversions"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Target Audience -->
+                <div class="form-section" id="section3">
+                    <h3 class="mb-4">🟧 3. Target Audience</h3>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="targetCustomer" class="form-label">Who is your target customer? (Age group, gender, profession, income level)</label>
+                            <textarea class="form-control" id="targetCustomer" name="target_customer" rows="4"></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="geographicRegions" class="form-label">Geographic regions you serve or want to target?</label>
+                            <textarea class="form-control" id="geographicRegions" name="geographic_regions" rows="3"></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="customerNeeds" class="form-label">What are their common needs, problems, or search intents?</label>
+                            <textarea class="form-control" id="customerNeeds" name="customer_needs" rows="4"></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="customerSources" class="form-label">Where do they find you currently?</label>
+                            <textarea class="form-control" id="customerSources" name="customer_sources" rows="3" placeholder="Google, Facebook, Instagram, WhatsApp, Walk-ins, Referrals"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Branding & Design -->
+                <div class="form-section" id="section4">
+                    <h3 class="mb-4">🟥 4. Branding & Design Preferences</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="logoUpload" class="form-label">Do you already have a logo? (Upload)</label>
+                            <input type="file" class="form-control" id="logoUpload" name="logo_upload" accept="image/*" onchange="uploadImage(this, 'logo_path')">
+                            <div id="logoPreview"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="colorScheme" class="form-label">Preferred color scheme or brand colors:</label>
+                            <input type="text" class="form-control" id="colorScheme" name="color_scheme">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fontStyles" class="form-label">Preferred font styles:</label>
+                            <input type="text" class="form-control" id="fontStyles" name="font_styles">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="tagline" class="form-label">Do you have a tagline or slogan?</label>
+                            <input type="text" class="form-control" id="tagline" name="tagline">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="websiteFeel" class="form-label">Describe the look and feel you want for your website:</label>
+                            <textarea class="form-control" id="websiteFeel" name="website_feel" rows="4" placeholder="e.g., modern, professional, minimalist, bold, fun, luxury"></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="referenceWebsites" class="form-label">Reference websites you like (Share 2–3 links with what you like about each):</label>
+                            <textarea class="form-control" id="referenceWebsites" name="reference_websites" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: Website Pages & Features -->
+                <div class="form-section" id="section5">
+                    <h3 class="mb-4">🟦 5. Website Pages & Features</h3>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Which pages do you want on your site?</label>
+                            <div class="checkbox-grid">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="page_home" name="required_pages" value="Home">
+                                    <label for="page_home">Home</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="page_about" name="required_pages" value="About Us">
+                                    <label for="page_about">About Us</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="page_services" name="required_pages" value="Services / Products">
+                                    <label for="page_services">Services / Products</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="page_contact" name="required_pages" value="Contact">
+                                    <label for="page_contact">Contact</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="page_portfolio" name="required_pages" value="Portfolio / Gallery">
+                                    <label for="page_portfolio">Portfolio / Gallery</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="page_blog" name="required_pages" value="Blog / News">
+                                    <label for="page_blog">Blog / News</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="page_testimonials" name="required_pages" value="Testimonials">
+                                    <label for="page_testimonials">Testimonials</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="page_faq" name="required_pages" value="FAQ">
+                                    <label for="page_faq">FAQ</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="page_careers" name="required_pages" value="Careers">
+                                    <label for="page_careers">Careers</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="page_legal" name="required_pages" value="Legal (Privacy Policy / T&C)">
+                                    <label for="page_legal">Legal (Privacy Policy / T&C)</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Required features:</label>
+                            <div class="checkbox-grid">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_contact_form" name="required_features" value="Contact Form">
+                                    <label for="feature_contact_form">Contact Form</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_whatsapp" name="required_features" value="WhatsApp Chat">
+                                    <label for="feature_whatsapp">WhatsApp Chat</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_live_chat" name="required_features" value="Live Chat">
+                                    <label for="feature_live_chat">Live Chat</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_booking" name="required_features" value="Appointment Booking">
+                                    <label for="feature_booking">Appointment Booking</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_payment" name="required_features" value="Payment Gateway">
+                                    <label for="feature_payment">Payment Gateway</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_blog" name="required_features" value="Blog">
+                                    <label for="feature_blog">Blog</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_newsletter" name="required_features" value="Newsletter Signup">
+                                    <label for="feature_newsletter">Newsletter Signup</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_login" name="required_features" value="User Login / Dashboard">
+                                    <label for="feature_login">User Login / Dashboard</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_ecommerce" name="required_features" value="Ecommerce / Cart / Checkout">
+                                    <label for="feature_ecommerce">Ecommerce / Cart / Checkout</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_downloads" name="required_features" value="Downloadable PDFs / Brochures">
+                                    <label for="feature_downloads">Downloadable PDFs / Brochures</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="feature_popups" name="required_features" value="Lead Capture Popups">
+                                    <label for="feature_popups">Lead Capture Popups</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="mobileResponsive" class="form-label">Should the website be mobile-first / responsive?</label>
+                            <select class="form-select" id="mobileResponsive" name="mobile_responsive">
+                                <option value="">Select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="multilingual" class="form-label">Do you need multilingual content? (If yes, list languages)</label>
+                            <input type="text" class="form-control" id="multilingual" name="multilingual">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Continue with more sections... -->
+                <div class="form-section" id="section6">
+                    <h3 class="mb-4">🟩 6. Content</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="contentReady" class="form-label">Do you have ready content for the website?</label>
+                            <select class="form-select" id="contentReady" name="content_ready">
+                                <option value="">Select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="photosUpload" class="form-label">Do you have professional photos or stock photos?</label>
+                            <input type="file" class="form-control" id="photosUpload" name="photos_upload" accept="image/*" multiple onchange="uploadImage(this, 'photos_path')">
+                            <div id="photosPreview"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="videosUpload" class="form-label">Any existing videos to include?</label>
+                            <input type="file" class="form-control" id="videosUpload" name="videos_upload" accept="video/*" onchange="uploadImage(this, 'videos_path')">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="needContentHelp" class="form-label">Would you like help with content writing / copywriting?</label>
+                            <select class="form-select" id="needContentHelp" name="need_content_help">
+                                <option value="">Select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="uploadedMaterials" class="form-label">Upload or link to brochures, flyers, or catalogues (if any):</label>
+                            <input type="file" class="form-control" id="uploadedMaterials" name="uploaded_materials" accept=".pdf,.doc,.docx,.jpg,.png" multiple onchange="uploadImage(this, 'uploaded_materials')">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 7: Business Information for SEO -->
+                <div class="form-section" id="section7">
+                    <h3 class="mb-4">🟧 7. Business Information for SEO</h3>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="businessAddress" class="form-label">Complete business address (for Local SEO):</label>
+                            <textarea class="form-control" id="businessAddress" name="business_address" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="businessPhone" class="form-label">Business phone number:</label>
+                            <input type="tel" class="form-control" id="businessPhone" name="business_phone">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="businessEmail" class="form-label">Business email:</label>
+                            <input type="email" class="form-control" id="businessEmail" name="business_email">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="businessHours" class="form-label">Business hours:</label>
+                            <input type="text" class="form-control" id="businessHours" name="business_hours" placeholder="e.g., Mon-Fri: 9AM-6PM, Sat: 10AM-4PM">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="areasServed" class="form-label">Areas/regions served:</label>
+                            <textarea class="form-control" id="areasServed" name="areas_served" rows="3"></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="productCategories" class="form-label">Product/service categories:</label>
+                            <textarea class="form-control" id="productCategories" name="product_categories" rows="3"></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="searchKeywords" class="form-label">Keywords people search for to find your business:</label>
+                            <textarea class="form-control" id="searchKeywords" name="search_keywords" rows="3"></textarea>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="businessTags" class="form-label">Business tags/labels:</label>
+                            <input type="text" class="form-control" id="businessTags" name="business_tags" placeholder="e.g., restaurant, Italian, delivery, catering">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="businessDescription" class="form-label">Business description (for SEO):</label>
+                            <textarea class="form-control" id="businessDescription" name="business_description" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 8: Google & Social Media -->
+                <div class="form-section" id="section8">
+                    <h3 class="mb-4">🟥 8. Google & Social Media</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="hasGoogleProfile" class="form-label">Do you have a Google Business Profile?</label>
+                            <select class="form-select" id="hasGoogleProfile" name="has_google_profile">
+                                <option value="">Select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="googleProfileLink" class="form-label">Google Business Profile link (if yes):</label>
+                            <input type="url" class="form-control" id="googleProfileLink" name="google_profile_link">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="socialMediaLinks" class="form-label">Social media links:</label>
+                            <textarea class="form-control" id="socialMediaLinks" name="social_media_links" rows="4" placeholder="Facebook: https://...
+Instagram: https://...
+LinkedIn: https://...
+Twitter: https://..."></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="hasAnalytics" class="form-label">Do you have Google Analytics or other tracking?</label>
+                            <select class="form-select" id="hasAnalytics" name="has_analytics">
+                                <option value="">Select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="runningAds" class="form-label">Are you currently running ads? (Google Ads, Facebook Ads, etc.)</label>
+                            <textarea class="form-control" id="runningAds" name="running_ads" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 9: Forms & Lead Generation -->
+                <div class="form-section" id="section9">
+                    <h3 class="mb-4">🟦 9. Forms & Lead Generation</h3>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="formDetails" class="form-label">What forms do you need? (Contact, Quote, Booking, etc.)</label>
+                            <textarea class="form-control" id="formDetails" name="form_details" rows="4"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="formDestination" class="form-label">Where should form submissions go?</label>
+                            <select class="form-select" id="formDestination" name="form_destination">
+                                <option value="">Select</option>
+                                <option value="email">Email</option>
+                                <option value="crm">CRM System</option>
+                                <option value="whatsapp">WhatsApp</option>
+                                <option value="database">Database</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="formIntegrations" class="form-label">Any specific integrations needed? (MailChimp, Zapier, etc.)</label>
+                            <textarea class="form-control" id="formIntegrations" name="form_integrations" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="responseTime" class="form-label">Expected response time for leads:</label>
+                            <select class="form-select" id="responseTime" name="response_time">
+                                <option value="">Select</option>
+                                <option value="immediate">Immediate (within 1 hour)</option>
+                                <option value="same_day">Same day</option>
+                                <option value="24_hours">Within 24 hours</option>
+                                <option value="48_hours">Within 48 hours</option>
+                                <option value="week">Within a week</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 10: Advertising Budget -->
+                <div class="form-section" id="section10">
+                    <h3 class="mb-4">🟩 10. Advertising Budget</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="adBudget" class="form-label">Monthly advertising budget (if any):</label>
+                            <select class="form-select" id="adBudget" name="ad_budget">
+                                <option value="">Select</option>
+                                <option value="none">No budget</option>
+                                <option value="under_5k">Under ₹5,000</option>
+                                <option value="5k_10k">₹5,000 - ₹10,000</option>
+                                <option value="10k_25k">₹10,000 - ₹25,000</option>
+                                <option value="25k_50k">₹25,000 - ₹50,000</option>
+                                <option value="50k_100k">₹50,000 - ₹1,00,000</option>
+                                <option value="above_100k">Above ₹1,00,000</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="adPlatforms" class="form-label">Preferred advertising platforms:</label>
+                            <div class="checkbox-grid">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="ad_google" name="ad_platforms" value="Google Ads">
+                                    <label for="ad_google">Google Ads</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="ad_facebook" name="ad_platforms" value="Facebook Ads">
+                                    <label for="ad_facebook">Facebook Ads</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="ad_instagram" name="ad_platforms" value="Instagram Ads">
+                                    <label for="ad_instagram">Instagram Ads</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="ad_linkedin" name="ad_platforms" value="LinkedIn Ads">
+                                    <label for="ad_linkedin">LinkedIn Ads</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="ad_youtube" name="ad_platforms" value="YouTube Ads">
+                                    <label for="ad_youtube">YouTube Ads</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="ad_other" name="ad_platforms" value="Other">
+                                    <label for="ad_other">Other</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="promotions" class="form-label">Any specific promotions or campaigns you want to run?</label>
+                            <textarea class="form-control" id="promotions" name="promotions" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 11: Domain & Hosting -->
+                <div class="form-section" id="section11">
+                    <h3 class="mb-4">🟧 11. Domain & Hosting</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="hasDomain" class="form-label">Do you already have a domain?</label>
+                            <select class="form-select" id="hasDomain" name="has_domain">
+                                <option value="">Select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="domainName" class="form-label">Domain name (if yes) or preferred domain:</label>
+                            <input type="text" class="form-control" id="domainName" name="domain_name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="hasHosting" class="form-label">Do you have hosting?</label>
+                            <select class="form-select" id="hasHosting" name="has_hosting">
+                                <option value="">Select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="hostingProvider" class="form-label">Current hosting provider (if any):</label>
+                            <input type="text" class="form-control" id="hostingProvider" name="hosting_provider">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="needEmailSetup" class="form-label">Do you need professional email setup?</label>
+                            <select class="form-select" id="needEmailSetup" name="need_email_setup">
+                                <option value="">Select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="needSecurity" class="form-label">Do you need SSL certificate and security features?</label>
+                            <select class="form-select" id="needSecurity" name="need_security">
+                                <option value="">Select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 12: Timeline & Expectations -->
+                <div class="form-section" id="section12">
+                    <h3 class="mb-4">🟥 12. Timeline & Expectations</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="launchDate" class="form-label">Preferred launch date:</label>
+                            <input type="date" class="form-control" id="launchDate" name="launch_date">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="upcomingDeadlines" class="form-label">Any upcoming deadlines or events?</label>
+                            <textarea class="form-control" id="upcomingDeadlines" name="upcoming_deadlines" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="needTraining" class="form-label">Do you need training on how to update the website?</label>
+                            <select class="form-select" id="needTraining" name="need_training">
+                                <option value="">Select</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 13: Add-ons & Additional Services -->
+                <div class="form-section" id="section13">
+                    <h3 class="mb-4">🟦 13. Add-ons & Additional Services</h3>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">What additional services are you interested in?</label>
+                            <div class="checkbox-grid">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="service_seo" name="additional_services" value="SEO Optimization">
+                                    <label for="service_seo">SEO Optimization</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="service_content" name="additional_services" value="Content Writing">
+                                    <label for="service_content">Content Writing</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="service_photography" name="additional_services" value="Photography">
+                                    <label for="service_photography">Photography</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="service_maintenance" name="additional_services" value="Website Maintenance">
+                                    <label for="service_maintenance">Website Maintenance</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="service_marketing" name="additional_services" value="Digital Marketing">
+                                    <label for="service_marketing">Digital Marketing</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="service_branding" name="additional_services" value="Branding & Design">
+                                    <label for="service_branding">Branding & Design</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="service_ecommerce" name="additional_services" value="E-commerce Setup">
+                                    <label for="service_ecommerce">E-commerce Setup</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="service_training" name="additional_services" value="Training & Support">
+                                    <label for="service_training">Training & Support</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="additionalNotes" class="form-label">Any additional notes or special requirements?</label>
+                            <textarea class="form-control" id="additionalNotes" name="additional_notes" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 14: Final Review & Submission -->
+                <div class="form-section" id="section14">
+                    <h3 class="mb-4">🟩 14. Final Review & Submission</h3>
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="alert alert-info">
+                                <h5>📋 Review Your Information</h5>
+                                <p>Please take a moment to review all the information you've provided. You can use the "Previous" button to go back and make any changes.</p>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="confirmAccuracy" name="confirm_accuracy" required>
+                                <label class="form-check-label" for="confirmAccuracy">
+                                    I confirm that all the information provided is accurate to the best of my knowledge.
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="agreeTerms" name="agree_terms" required>
+                                <label class="form-check-label" for="agreeTerms">
+                                    I agree to the terms and conditions and privacy policy.
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 text-center">
+                            <button type="button" class="btn btn-success btn-lg" onclick="submitForm()" id="finalSubmitBtn">
+                                <i class="fas fa-check-circle"></i> Submit Complete Form
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Final Section: Completion -->
+                <div class="form-section" id="completionSection">
+                    <div class="completion-summary">
+                        <h3>🎉 Thank You for Your Submission!</h3>
+                        <p>Your business information has been successfully submitted. We will review your details and get back to you soon.</p>
+                        <button class="btn btn-light btn-lg" onclick="startNewForm()">📝 Start New Form</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="navigation-buttons" id="navigationButtons" style="display: none;">
+                <button class="btn btn-outline-secondary" onclick="previousSection()" id="prevBtn">Previous</button>
+                <button class="btn btn-success" onclick="saveSection()" id="saveBtn">Save Section</button>
+                <button class="btn btn-primary" onclick="nextSection()" id="nextBtn">Next</button>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertContainer" class="mt-3"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

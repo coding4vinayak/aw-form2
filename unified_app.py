@@ -395,11 +395,16 @@ if __name__ == '__main__':
         except Exception as e:
             print(f"Error creating tables: {e}")
     
+    # Get port from environment (Render sets this)
+    port = int(os.environ.get('PORT', 5000))
+    
     print("🚀 Unified Bootstrap Form Application Starting...")
-    print("📋 Form available at: http://localhost:5000")
-    print("🔐 Admin panel at: http://localhost:5000/admin")
+    print(f"📋 Form available at: http://localhost:{port}")
+    print(f"🔐 Admin panel at: http://localhost:{port}/admin")
     print("💾 Database: PostgreSQL")
     print("🌐 Multi-language support: English, Hindi, Marathi")
     print("📊 14 comprehensive form sections")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # For production, disable debug mode
+    debug_mode = os.environ.get('FLASK_ENV') != 'production'
+    app.run(debug=debug_mode, host='0.0.0.0', port=port)

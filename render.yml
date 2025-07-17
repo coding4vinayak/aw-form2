@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: my-flask-app
+    env: python
+    region: oregon
+    buildCommand: |
+      pip install --upgrade pip setuptools wheel
+      pip install numpy
+      pip install -r requirements.txt
+    startCommand: "python backend/unified_app.py"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true   # ✅ This is safe
+      - key: DATABASE_URL
+        value: false  # 🔁 Replace or use Render's secret env config

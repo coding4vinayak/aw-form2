@@ -2,7 +2,8 @@
 let isAuthenticated = false;
 let forms = [];
 let selectedFormData = null;
-const backendUrl = 'http://localhost:5000';
+// Dynamic backend URL - works for both local and production
+const backendUrl = window.location.origin;
 const ADMIN_PASSWORD = 'vinayak@123';
 
 // Initialize admin panel

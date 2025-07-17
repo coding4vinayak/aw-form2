@@ -1,14 +1,14 @@
 services:
   - type: web
-    name: flask-app
+    name: business-form-app
     env: python
     region: oregon
     build:
-      pythonVersion: 3.11  # 👈 important fix
+      pythonVersion: 3.11
     buildCommand: |
       pip install --upgrade pip setuptools wheel
       pip install -r requirements.txt
-    startCommand: "python backend/unified_app.py"
+    startCommand: "python unified_app.py"
     envVars:
       - key: DATABASE_URL
         sync: false
@@ -18,3 +18,5 @@ services:
         value: uploads
       - key: MAX_CONTENT_LENGTH
         value: "16777216"
+      - key: FLASK_ENV
+        value: production

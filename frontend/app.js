@@ -3,7 +3,8 @@ let currentSection = 0;
 let formId = null;
 let formData = {};
 let currentLanguage = 'en';
-const backendUrl = 'http://localhost:5000';
+// Dynamic backend URL - works for both local and production
+const backendUrl = window.location.origin;
 const totalSections = 14;
 
 // Language translations
